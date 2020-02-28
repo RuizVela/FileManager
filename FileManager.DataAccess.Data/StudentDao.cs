@@ -9,7 +9,7 @@ namespace FileManager.DataAccess.Data
 {
     public class StudentDao
     {
-        public static Add(Student student)
+        public static void Add(Student student)
         {
             throw new NotImplementedException("Método no implementado");
         }
