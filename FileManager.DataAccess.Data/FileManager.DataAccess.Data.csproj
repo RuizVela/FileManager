@@ -41,8 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IStudentFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudentDao.cs" />
+    <Compile Include="TextFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FileManager.Common.Layer\FileManager.Common.Layer.csproj">
