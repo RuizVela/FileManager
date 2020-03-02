@@ -3,23 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FileManager.Common.Layer;
 
 namespace FileManager.DataAccess.Data
 {
-    class TextFile : IStudentFile
+    class XmlFile : IVuelingFile
     {
-        public void Add(Student student)
+        public void Add()
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(Student student)
+        public void Delete()
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Student student)
+        public void Edit()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string name()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string path()
         {
             throw new NotImplementedException();
         }
