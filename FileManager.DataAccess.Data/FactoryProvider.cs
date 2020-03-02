@@ -8,9 +8,15 @@ namespace FileManager.DataAccess.Data
 {
     public class FactoryProvider
     {
-        public static IFileFactory<IVuelingFile> CreateFactory(string choice)
+        public static IFileFactory<VuelingFile> CreateFactory(string choice)
         {
-            throw new NotImplementedException();
+            switch(choice)
+            {
+                case "FileFactory":
+                    return new FileFactory();
+                default:
+                    return null;
+            }
         }
     }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FileManager.DataAccess.Data
 {
-    public interface IFileFactory<IVuelignFile>
+    public interface IFileFactory<VuelignFile>
     {
-        IVuelingFile Create(string FileType);
+        VuelingFile Create(string FileType);
     }
 }

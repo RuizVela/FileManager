@@ -1,34 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
+using FileManager.Common.Layer;
 
 namespace FileManager.DataAccess.Data
 {
-    class XmlFile : IVuelingFile
+    public class XmlFile : VuelingFile
     {
-        public void Add()
-        {
-            throw new NotImplementedException();
-        }
+        public string path;
+        string name;
 
-        public void Delete()
+        public override void Add(Student student)
         {
-            throw new NotImplementedException();
+            if (!File.Exists(path))
+            {
+                CreateFile();
+            }
+            AppendStudent(student);
         }
-
-        public void Edit()
+        public void CreateFile()
         {
-            throw new NotImplementedException();
+            new XDocument(
+                   new XElement("Students"
+                   )
+                   ).Save(path);
         }
-
-        public string name()
+        private void AppendStudent(Student student)
         {
-            throw new NotImplementedException();
+            if (GetById(student)) {
+                throw new Exception("El ID del estudiante ya existe");
+            }
+            XDocument document = XDocument.Load(path);
+            XElement child = new XElement("Student");
+            child.Add(new XElement("Id", student.id.ToString()));
+            child.Add(new XElement("Name", student.name));
+            child.Add(new XElement("Surname", student.surname));
+            child.Add(new XElement("DateOfBirth", student.dateOfBirth.ToString("dd/MM/yyyy")));
+            document.Root.Add(child);
+            document.Save(path);
         }
-
-        public string path()
+        private List<int> GetIds()
+        {
+            List<int> list = new List<int>();
+            XDocument document = XDocument.Load(path);
+            foreach (var item in document.Element("Students").Elements("Student").Elements("Id"))
+            {
+                list.Add(int.Parse(item.Value));
+            }
+            return list;
+        }
+        public bool GetById(Student student)
+        {
+            var list = GetIds();
+            if (!list.Contains(student.id))
+            {
+                return false;
+            }
+            return true;
+        } 
+        public override void Delete(Student student)
+        {
+            if (!GetById(student)) 
+            {
+                throw new Exception("El estudiante no existe");
+            }
+        }
+        public override void Edit(Student student)
         {
             throw new NotImplementedException();
         }

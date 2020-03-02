@@ -3,32 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileManager.Common.Layer;
 
 namespace FileManager.DataAccess.Data
 {
-    class TxtFile : IVuelingFile
+    class TxtFile : VuelingFile
     {
-        public void Add()
+        string path;
+        string name;
+        public override void Add(Student student)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete()
+        public override void Delete(Student student)
         {
             throw new NotImplementedException();
         }
 
-        public void Edit()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string name()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string path()
+        public override void Edit(Student student)
         {
             throw new NotImplementedException();
         }

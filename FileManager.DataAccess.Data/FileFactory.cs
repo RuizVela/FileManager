@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 
 namespace FileManager.DataAccess.Data
 {
-    public class FileFactory : IFileFactory<IVuelingFile>
+    public class FileFactory : IFileFactory<VuelingFile>
     {
-        public IVuelingFile Create(string FileType)
+        public VuelingFile Create(string FileType)
         {
-            return null;
+            switch(FileType)
+            {
+                case "txt":
+                    return new TxtFile();
+                case "xml":
+                    return new XmlFile();
+                case "json":
+                    return new JsonFile();
+                default:
+                    return null;
+            }
         }
     }
 }
