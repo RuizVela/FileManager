@@ -36,28 +36,71 @@ namespace FileManager.DataAccess.Data.Tests
             File.Delete(xmlFile.path);
         }
         [TestMethod()]
-        public void AddTest()
+        public void Add_method_add_a_student_to_the_file()
         {
             xmlFile.Add(student);
-            var exists = xmlFile.GetById(student);
-            Assert.IsTrue(exists);
+            var response = xmlFile.GetStudent(student);
+            Assert.AreEqual(student.id, response.id);
         }
         [TestMethod()]
         [ExpectedException(typeof(Exception), "El ID del estudiante ya existe")]
-        public void AddTest2()
+        public void Add_method_cant_add_new_student_with_same_id()
         {
             xmlFile.Add(student);
             xmlFile.Add(student);
-            var exists = xmlFile.GetById(student);
-            Assert.IsTrue(exists);
         }
 
         [TestMethod()]
         [ExpectedException(typeof(Exception), "El estudiante no existe")]
-        public void DeleteTest()
+        public void Delete_method_throw_error_if_student_doesnt_exists()
         {
             xmlFile.CreateFile();
             xmlFile.Delete(student);
+        }
+        [TestMethod()]
+        [ExpectedException(typeof(Exception), "El archivo no existe")]
+        public void Delete_method_throw_error_if_file_doesnt_exists()
+        {
+            xmlFile.Delete(student);
+        }
+        [TestMethod()]
+        public void Delete_method_deletes_a_student_from_the_file()
+        {
+            xmlFile.Add(student);
+            xmlFile.Delete(student);
+            var expected = xmlFile.GetStudent(student);
+            Assert.IsNull(expected);
+        }
+
+        [TestMethod()]
+        public void CreateFile_method_creates_the_file()
+        {
+            xmlFile.CreateFile();
+            var expected = File.Exists(xmlFile.path);
+            Assert.IsTrue(expected);
+        }
+
+        [TestMethod()]
+        public void Edit_method_update_the_fields_of_an_existing_student()
+        {
+            var newName = "Name";
+            var newSurname = "Surname";
+            var newDateOfBirth = new DateTime(1991, 11, 11);
+            var student2 = new Student(id, newName, newSurname, newDateOfBirth);
+            xmlFile.Add(student);
+            xmlFile.Edit(student2);
+            var editedStudent = xmlFile.GetStudent(student);
+            bool areEqual = student.id == editedStudent.id && newName == editedStudent.name && 
+                newSurname == editedStudent.surname && newDateOfBirth == editedStudent.dateOfBirth;
+            Assert.IsTrue(areEqual);
+        }
+
+        [TestMethod()]
+        public void GetStudent_method_returns_the_student_from_the_file()
+        {
+            xmlFile.Add(student);
+            var expected = xmlFile.GetStudent(student);
+            Assert.AreEqual(student.id, expected.id);
         }
     }
 }

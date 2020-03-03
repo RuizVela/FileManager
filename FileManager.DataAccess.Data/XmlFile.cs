@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using FileManager.Common.Layer;
 
 namespace FileManager.DataAccess.Data
@@ -26,13 +27,11 @@ namespace FileManager.DataAccess.Data
         public void CreateFile()
         {
             new XDocument(
-                   new XElement("Students"
-                   )
-                   ).Save(path);
+                   new XElement("Students")).Save(path);
         }
         private void AppendStudent(Student student)
         {
-            if (GetById(student)) {
+            if (GetStudent(student) != null) {
                 throw new Exception("El ID del estudiante ya existe");
             }
             XDocument document = XDocument.Load(path);
@@ -44,35 +43,58 @@ namespace FileManager.DataAccess.Data
             document.Root.Add(child);
             document.Save(path);
         }
-        private List<int> GetIds()
+        private List<Student> GetStudents()
         {
-            List<int> list = new List<int>();
-            XDocument document = XDocument.Load(path);
-            foreach (var item in document.Element("Students").Elements("Student").Elements("Id"))
+            List<Student> list = new List<Student>();
+            if (File.Exists(path))
+            { 
+            XmlDocument document = new XmlDocument();
+            document.Load(path);
+            var studentData = document.SelectNodes("Students/Student");
+            foreach (XmlNode node in studentData)
             {
-                list.Add(int.Parse(item.Value));
+                var studentId = int.Parse(node.SelectSingleNode("Id").InnerText);
+                var studentName = node.SelectSingleNode("Name").InnerText;
+                var studentSurname = node.SelectSingleNode("Surname").InnerText;
+                var studentDateOfBirth = Convert.ToDateTime(node.SelectSingleNode("DateOfBirth").InnerText);
+                var student = new Student(studentId, studentName, studentSurname, studentDateOfBirth);
+                list.Add(student);
+            }
             }
             return list;
         }
-        public bool GetById(Student student)
+        public Student GetStudent(Student student)
         {
-            var list = GetIds();
-            if (!list.Contains(student.id))
-            {
-                return false;
-            }
-            return true;
+            var list = GetStudents();
+            var storedStudent = list.Find(x => x.id.Equals(student.id));
+            return storedStudent;
         } 
         public override void Delete(Student student)
         {
-            if (!GetById(student)) 
+            if (!File.Exists(path))
+            {
+                throw new Exception("El archivo no existe");
+            }
+            if (GetStudent(student) == null) 
             {
                 throw new Exception("El estudiante no existe");
             }
+            XDocument document = XDocument.Load(path);
+            XElement toDelete = document.Root.Elements("Student")
+                .SingleOrDefault(x => x.Element("Id").Value.Equals(student.id.ToString()));
+            toDelete.Remove();
+            document.Save(path);
+
         }
         public override void Edit(Student student)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Load(path);
+            IEnumerable<XElement> toEdit = document.Root.Elements("Student")
+    .Where(x => x.Element("Id").Value.Equals(student.id.ToString()));
+            toEdit.Elements("Name").FirstOrDefault().Value = student.name;
+            toEdit.Elements("Surname").FirstOrDefault().Value = student.surname;
+            toEdit.Elements("DateOfBirth").FirstOrDefault().Value = student.dateOfBirth.ToString("dd/MM/yyyy");
+            document.Save(path);
         }
     }
 }
